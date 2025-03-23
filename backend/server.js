@@ -11,10 +11,19 @@ connectDB();
 
 const app = express();
 const server = http.createServer(app);
+const requestChangeRoutes = require("./routes/requestChangeRoutes");
+// Socket.IO configuration
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
 
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "http://localhost:5173",
   credentials: true
 }));
 
@@ -28,30 +37,34 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Attach socket.io instance to the app for global use
+app.set("socketio", io);
+
+// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/timetable", require("./routes/timetableRoutes"));
-
+app.use("/api", requestChangeRoutes);
 app.get("/dashboard", (req, res) => {
   if (req.isAuthenticated && req.isAuthenticated()) {
-    res.send(`<h1>Dashboard</h1><p>User: ${req.user.name}</p><p>Email: ${req.user.email}</p>`);
+    res.send(`
+      <h1>Dashboard</h1>
+      <p>User: ${req.user.name}</p>
+      <p>Email: ${req.user.email}</p>
+    `);
   } else {
-    res.send("<h1>Dashboard</h1><p>No user information available.</p>");
+    res.send(`
+      <h1>Dashboard</h1>
+      <p>No user information available.</p>
+    `);
   }
 });
 
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
-});
 io.on("connection", (socket) => {
-  console.log("New client connected", socket.id);
+  console.log("New client connected:", socket.id);
   socket.on("disconnect", () => {
-    console.log("Client disconnected", socket.id);
+    console.log("Client disconnected:", socket.id);
   });
 });
-app.set("socketio", io);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
