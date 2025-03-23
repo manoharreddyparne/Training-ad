@@ -22,8 +22,15 @@ passport.use(new GoogleStrategy({
   scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"]
 }, async (accessToken, refreshToken, profile, done) => {
   try {
+    // First, try to find a user by googleId.
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
+      // If not found, try to find by email.
+      user = await User.findOne({ email: profile.emails[0].value });
+    }
+    
+    if (!user) {
+      // If no user exists, create one.
       user = new User({
         googleId: profile.id,
         name: profile.displayName,
@@ -33,14 +40,18 @@ passport.use(new GoogleStrategy({
         role: "student"  // Default role
       });
     } else {
+      // Update tokens and googleId if necessary.
+      user.googleId = profile.id;
       user.googleAccessToken = accessToken;
       user.googleRefreshToken = refreshToken;
     }
+    
     await user.save();
     return done(null, user);
   } catch (error) {
     return done(error, null);
   }
 }));
+
 
 module.exports = passport;
