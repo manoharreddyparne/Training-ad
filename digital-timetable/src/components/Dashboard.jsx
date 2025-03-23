@@ -3,7 +3,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TimetableForm from "./TimetableForm";
 import TimetableList from "./TimetableList";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { user, loading, logout } = useContext(AuthContext);
@@ -34,19 +34,17 @@ const Dashboard = () => {
       </button>
       <hr />
 
-      {/* STUDENT VIEW */}
       {user.role === "student" && (
         <>
           <h2>Your Schedule</h2>
-          <TimetableList /> {/* Students only see their timetable */}
+          <TimetableList />
         </>
       )}
 
-      {/* TEACHER VIEW */}
       {user.role === "teacher" && (
         <>
           <h2>Your Teaching Schedule</h2>
-          <TimetableList /> {/* Teachers see their teaching schedule */}
+          <TimetableList /> 
           <Link to="/request-change">
             <button style={{ padding: "10px", marginTop: "10px", cursor: "pointer" }}>
               Request Schedule Change
@@ -55,7 +53,6 @@ const Dashboard = () => {
         </>
       )}
 
-      {/* ADMIN VIEW */}
       {user.role === "admin" && (
         <>
           <h2>Create Timetable</h2>

@@ -1,4 +1,3 @@
-// src/components/Signup.jsx
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -11,7 +10,6 @@ const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // Role is fixed as "student"
   const role = "student";
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');

@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
@@ -14,7 +13,6 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await login({ email, password });
-      // If login is successful, redirect to dashboard
       if (response && response.user) {
         navigate('/dashboard');
       }

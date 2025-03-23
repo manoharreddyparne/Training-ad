@@ -21,11 +21,11 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/timetable", timetable); // Removed 'response'
+      await axios.post("/api/timetable", timetable);
       setMessage("Timetable created successfully!");
       setTimetable({ subject: "", teacher: "", time: "" });
     } catch {
-      setMessage("Error creating timetable."); // Removed 'error' variable
+      setMessage("Error creating timetable."); 
     }
   };
   

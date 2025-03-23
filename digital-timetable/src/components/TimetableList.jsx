@@ -16,11 +16,8 @@ const TimetableList = () => {
           setError("No timetable found.");
           return;
         }
-
-        // Get today's weekday to filter out today's schedule
         const today = new Date().toLocaleString("en-US", { weekday: "long" });
 
-        // Exclude today's schedule
         const filteredWeekly = allSchedules.filter((entry) => entry.title !== today);
         setWeeklySchedule(filteredWeekly);
       } catch (err) {

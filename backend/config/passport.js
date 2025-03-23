@@ -36,14 +36,13 @@ passport.use(
             googleId: profile.id,
             name: profile.displayName,
             email: profile.emails[0].value,
-            role: "student", // Default role
+            role: "student", 
           });
         } else {
-          // Ensure Google ID is linked
+
           user.googleId = profile.id;
         }
 
-        // Store tokens securely if needed (not recommended in DB)
         user.googleAccessToken = accessToken;
         user.googleRefreshToken = refreshToken;
 

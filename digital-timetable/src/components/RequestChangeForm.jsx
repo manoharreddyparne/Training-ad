@@ -19,7 +19,6 @@ const RequestChangeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Send the request to the backend (Replace with your actual API)
       const response = await fetch("/api/request-change", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

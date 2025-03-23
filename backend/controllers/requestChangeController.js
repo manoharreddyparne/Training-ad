@@ -1,6 +1,5 @@
 const RequestChange = require("../models/RequestChange");
 
-// ✅ Submit a new request
 exports.submitRequest = async (req, res) => {
   try {
     const { teacherId, teacherName, date, currentTimeSlot, requestedTimeSlot, reason } = req.body;
@@ -22,7 +21,6 @@ exports.submitRequest = async (req, res) => {
   }
 };
 
-// ✅ Get all requests (for Admin later)
 exports.getAllRequests = async (req, res) => {
   try {
     const requests = await RequestChange.find().sort({ createdAt: -1 });
@@ -33,7 +31,6 @@ exports.getAllRequests = async (req, res) => {
   }
 };
 
-// ✅ Get teacher's own requests
 exports.getTeacherRequests = async (req, res) => {
   try {
     const { teacherId } = req.params;

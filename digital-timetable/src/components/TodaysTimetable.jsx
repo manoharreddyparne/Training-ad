@@ -1,4 +1,4 @@
-// src/components/TodaysTimetable.jsx
+
 import React, { useEffect, useState, useContext } from "react";
 import api from "../services/api";
 import { AuthContext } from "../contexts/AuthContext";
@@ -12,13 +12,11 @@ const TodaysTimetable = () => {
   useEffect(() => {
     async function fetchTodaysTimetable() {
       try {
-        // Fetch the weekly timetable
         const response = await api.get("/timetable/");
         let entries = response.data;
         const now = new Date();
-        const todayDay = now.getDay(); // 0 (Sunday) to 6 (Saturday)
+        const todayDay = now.getDay(); 
 
-        // Filter timetable based on user role
         if (user.role === "student") {
           entries = entries.filter(entry => entry.section === user.section);
         } else if (user.role === "teacher") {
@@ -26,14 +24,10 @@ const TodaysTimetable = () => {
             entry.timeSlots.some(slot => slot.teacher === user.name)
           );
         }
-
-        // Find today's entries
         const todaysEntries = entries.filter(entry => {
           const entryDate = new Date(entry.date);
           return entryDate.getDay() === todayDay;
         });
-
-        // Find the current class happening
         let ongoingClass = null;
         todaysEntries.forEach(entry => {
           entry.timeSlots.forEach(slot => {
