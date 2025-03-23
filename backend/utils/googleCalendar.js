@@ -1,6 +1,6 @@
 const { google } = require("googleapis");
 
-// Returns a Google Calendar client using the tokens stored on the user object.
+
 const getCalendarClient = (user) => {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -14,13 +14,7 @@ const getCalendarClient = (user) => {
   return google.calendar({ version: "v3", auth: oauth2Client });
 };
 
-/**
- * Inserts or updates an event in the user's primary calendar using timetable data.
- * For a given time slot (if timeSlotIndex is provided), a unique identifier is generated
- * and set as the iCalUID. The function first checks for an event with that iCalUID.
- * If found, it updates that event; otherwise, it creates a new event.
- * Manually created events (without your custom iCalUID) are left intact.
- */
+
 const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
   try {
     const calendar = getCalendarClient(user);
@@ -33,11 +27,10 @@ const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
       timetable.timeSlots.length > timeSlotIndex
     ) {
       const slot = timetable.timeSlots[timeSlotIndex];
-      // Generate a unique identifier using timetable _id and the time slot index.
-      // Use only allowed characters (lowercase letters, numbers, hyphens, and underscores).
+
       uniqueId = `${timetable._id.toString()}-${timeSlotIndex}-manoharreddy`.toLowerCase();
       event = {
-        // Do not include the 'id' property on insert. We'll use iCalUID for lookup.
+
         summary: `${timetable.title} - ${slot.subject}`,
         description: `Class in room ${slot.room} taught by ${slot.teacher}`,
         start: {
@@ -51,7 +44,7 @@ const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
         iCalUID: uniqueId,
       };
     } else {
-      // Fallback: create an event using the timetable's overall date.
+
       event = {
         summary: timetable.title,
         description: `Timetable scheduled on ${new Date(timetable.date).toLocaleDateString()}`,
@@ -66,7 +59,6 @@ const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
       };
     }
 
-    // If a uniqueId exists, check if an event with that iCalUID already exists.
     if (uniqueId) {
       const listRes = await calendar.events.list({
         calendarId: "primary",
@@ -74,9 +66,9 @@ const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
         singleEvents: true,
       });
       if (listRes.data.items && listRes.data.items.length > 0) {
-        // If found, update the existing event.
+
         const existingEvent = listRes.data.items[0];
-        // Prepare resource for update (do not include an id property)
+  
         const updateResource = { ...event };
         console.log("Event found with iCalUID", uniqueId, "- updating it.");
         const updateRes = await calendar.events.update({
@@ -89,8 +81,6 @@ const addEventToCalendar = async (user, timetable, timeSlotIndex = null) => {
         return updateRes.data;
       }
     }
-    
-    // Otherwise, insert a new event (do not include custom 'id' on insert).
     const insertRes = await calendar.events.insert({
       calendarId: "primary",
       resource: event,

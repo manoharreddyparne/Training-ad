@@ -11,8 +11,6 @@ const authMiddleware = (roles = []) => {
       }
       const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Fetch the full user from the DB so that req.user contains all fields (e.g. googleAccessToken)
       const user = await User.findById(decoded.id);
       if (!user) {
         return res.status(401).json({ message: "Unauthorized: User not found" });

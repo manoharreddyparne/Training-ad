@@ -11,7 +11,7 @@ const TimeSlotSchema = new mongoose.Schema({
 const TimetableSchema = new mongoose.Schema({
   title: { type: String, required: true },
   date: { type: Date, required: true },
-  section: { type: String, required: true }, // e.g., "A", "B", etc.
+  section: { type: String, required: true }, 
   timeSlots: [TimeSlotSchema],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 });

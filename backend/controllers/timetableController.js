@@ -3,18 +3,15 @@ const nodemailer = require("nodemailer");
 const { addEventToCalendar } = require("../utils/googleCalendar");
 const User = require("../models/User");
 
-// Set up nodemailer transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465, // secure port for SSL
+  port: 465, 
   secure: true,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // ensure no spaces in the app password
+    pass: process.env.EMAIL_PASS,
   },
 });
-
-// Verify transporter
 transporter.verify((error, success) => {
   if (error) {
     console.error("Error verifying transporter:", error);
@@ -22,8 +19,6 @@ transporter.verify((error, success) => {
     console.log("Server is ready to send emails");
   }
 });
-
-// Dashboard Endpoints (unchanged)
 exports.adminDashboard = (req, res) => {
   res.json({ message: "Welcome to the Admin Dashboard", user: req.user });
 };
@@ -33,8 +28,6 @@ exports.teacherDashboard = (req, res) => {
 exports.studentDashboard = (req, res) => {
   res.json({ message: "Welcome to the Student Dashboard", user: req.user });
 };
-
-// Get all timetables
 exports.getTimetables = async (req, res) => {
   try {
     const timetables = await Timetable.find();
@@ -43,8 +36,6 @@ exports.getTimetables = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.toString() });
   }
 };
-
-// Get a single timetable by ID
 exports.getTimetableById = async (req, res) => {
   try {
     const timetable = await Timetable.findById(req.params.id);
@@ -57,25 +48,20 @@ exports.getTimetableById = async (req, res) => {
   }
 };
 
-// Create new timetable(s) and update Google Calendars for appropriate students
 exports.createTimetable = async (req, res) => {
   try {
-    // Support a single object or an array of timetable objects.
     let timetableDataArray = Array.isArray(req.body) ? req.body : [req.body];
     let results = [];
     
     for (const data of timetableDataArray) {
       const { title, date, section, timeSlots } = data;
-      
-      // Convert the main date and each time slot's times into Date objects.
+
       const parsedDate = new Date(date);
       const parsedTimeSlots = timeSlots.map(slot => ({
         ...slot,
         startTime: new Date(slot.startTime),
         endTime: new Date(slot.endTime)
       }));
-      
-      // Check if a timetable with the same title, date, and section exists.
       let timetable = await Timetable.findOne({
         title: title,
         date: parsedDate,
@@ -83,12 +69,10 @@ exports.createTimetable = async (req, res) => {
       });
       
       if (timetable) {
-        // Update the timetable's time slots.
         timetable.timeSlots = parsedTimeSlots;
         timetable = await timetable.save();
         console.log("Existing timetable updated.");
       } else {
-        // Create a new timetable.
         timetable = new Timetable({
           title,
           date: parsedDate,
@@ -101,12 +85,10 @@ exports.createTimetable = async (req, res) => {
       }
   
       let eventResponses = [];
-  
-      // If the admin creates the timetable, update calendars for all students in the matching section.
       if (req.user.role === "admin") {
         const students = await User.find({
           role: "student",
-          section: section, // Only update students in the matching section
+          section: section, 
           googleAccessToken: { $exists: true, $ne: null },
         });
         console.log("Found", students.length, "student(s) in section", section);
@@ -133,7 +115,6 @@ exports.createTimetable = async (req, res) => {
           }
         }
       } else {
-        // If a non-admin user creates the timetable, update only that user's calendar.
         for (let i = 0; i < parsedTimeSlots.length; i++) {
           try {
             const calendarEvent = await addEventToCalendar(req.user, timetable, i);
@@ -155,8 +136,6 @@ exports.createTimetable = async (req, res) => {
           }
         }
       }
-  
-      // Emit a real-time update using Socket.io.
       const io = req.app.get("socketio");
       io.emit("timetableUpdated", { action: "created", timetable });
   
@@ -169,7 +148,6 @@ exports.createTimetable = async (req, res) => {
   }
 };
 
-// Update a timetable by ID (unchanged)
 exports.updateTimetable = async (req, res) => {
   try {
     const updatedTimetable = await Timetable.findByIdAndUpdate(
@@ -188,7 +166,6 @@ exports.updateTimetable = async (req, res) => {
   }
 };
 
-// Delete a timetable by ID (unchanged)
 exports.deleteTimetable = async (req, res) => {
   try {
     const deletedTimetable = await Timetable.findByIdAndDelete(req.params.id);
@@ -203,7 +180,6 @@ exports.deleteTimetable = async (req, res) => {
   }
 };
 
-// Helper function to check time slot overlap (unchanged)
 const isOverlap = (slot1, slot2) => {
   const start1 = new Date(slot1.startTime);
   const end1 = new Date(slot1.endTime);
@@ -212,7 +188,6 @@ const isOverlap = (slot1, slot2) => {
   return start1 < end2 && start2 < end1;
 };
 
-// Check for timetable conflicts and send an email notification if found (unchanged)
 exports.checkConflicts = async (req, res) => {
   try {
     const timetables = await Timetable.find();
