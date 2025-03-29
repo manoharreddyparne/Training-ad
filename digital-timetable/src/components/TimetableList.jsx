@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
+import "./TimetableList.css";
 
-const TimetableList = () => {
+const TimetableList = ({ filterOutToday = true }) => {
   const [weeklySchedule, setWeeklySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -11,14 +12,16 @@ const TimetableList = () => {
       try {
         const response = await api.get("/timetable/");
         const allSchedules = response.data;
-
+        console.log("All schedules:", allSchedules);
         if (!allSchedules || allSchedules.length === 0) {
           setError("No timetable found.");
           return;
         }
-        const today = new Date().toLocaleString("en-US", { weekday: "long" });
-
-        const filteredWeekly = allSchedules.filter((entry) => entry.title !== today);
+        let filteredWeekly = allSchedules;
+        if (filterOutToday) {
+          const today = new Date().toLocaleString("en-US", { weekday: "long" });
+          filteredWeekly = allSchedules.filter((entry) => entry.title !== today);
+        }
         setWeeklySchedule(filteredWeekly);
       } catch (err) {
         setError("Error fetching timetable. Please try again.");
@@ -29,25 +32,25 @@ const TimetableList = () => {
     }
 
     fetchTimetable();
-  }, []);
+  }, [filterOutToday]);
 
   if (loading) return <p>Loading timetable...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h2>Weekly Timetable</h2>
+    <div className="timetable-list-container">
+      <h2>Timetable List</h2>
       {weeklySchedule.length === 0 ? (
-        <p>No weekly schedule available.</p>
+        <p>No timetable available.</p>
       ) : (
         weeklySchedule.map((entry, index) => (
-          <div key={index} style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "5px" }}>
+          <div key={index} className="timetable-entry">
             <h3>{entry.title}</h3>
             {entry.timeSlots.map((slot, i) => (
               <p key={i}>
                 <strong>{slot.subject}</strong> - {slot.teacher} ({slot.room})
                 <br />
-                Time: {new Date(slot.startTime).toLocaleTimeString()} - {new Date(slot.endTime).toLocaleTimeString()}
+                Time: {slot.startTime} - {slot.endTime}
               </p>
             ))}
           </div>

@@ -1,10 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import './Login.css';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,10 +11,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login({ email, password });
-      if (response && response.user) {
-        navigate('/dashboard');
-      }
+      await login({ email, password });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
@@ -26,9 +22,9 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <input 
           type="email" 
@@ -36,14 +32,14 @@ const Login = () => {
           value={email} 
           onChange={e => setEmail(e.target.value)}
           required
-        /><br />
+        />
         <input 
           type="password" 
           placeholder="Password" 
           value={password} 
           onChange={e => setPassword(e.target.value)}
           required
-        /><br />
+        />
         <button type="submit">Login</button>
       </form>
       <hr />

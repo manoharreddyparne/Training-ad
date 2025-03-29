@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "./RequestChangeForm.css";
 
 const RequestChangeForm = () => {
   const { user } = useContext(AuthContext);
@@ -42,32 +43,28 @@ const RequestChangeForm = () => {
   };
 
   return (
-    <div>
+    <div className="request-change-container">
       <h2>Request Schedule Change</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="request-change-form">
         <label>
           Date:
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </label>
-        <br />
         
         <label>
           Current Time Slot:
           <input type="text" name="currentTimeSlot" value={formData.currentTimeSlot} onChange={handleChange} required />
         </label>
-        <br />
 
         <label>
           Requested Time Slot:
           <input type="text" name="requestedTimeSlot" value={formData.requestedTimeSlot} onChange={handleChange} required />
         </label>
-        <br />
 
         <label>
           Reason for Change:
           <textarea name="reason" value={formData.reason} onChange={handleChange} required />
         </label>
-        <br />
 
         <button type="submit">Submit Request</button>
       </form>

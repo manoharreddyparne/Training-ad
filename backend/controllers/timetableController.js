@@ -57,11 +57,13 @@ exports.createTimetable = async (req, res) => {
       const { title, date, section, timeSlots } = data;
 
       const parsedDate = new Date(date);
+      // Combine date with the provided times to form valid ISO strings.
       const parsedTimeSlots = timeSlots.map(slot => ({
         ...slot,
-        startTime: new Date(slot.startTime),
-        endTime: new Date(slot.endTime)
+        startTime: new Date(`${date}T${slot.startTime}`),
+        endTime: new Date(`${date}T${slot.endTime}`)
       }));
+      
       let timetable = await Timetable.findOne({
         title: title,
         date: parsedDate,
@@ -84,7 +86,8 @@ exports.createTimetable = async (req, res) => {
         console.log("New timetable created.");
       }
   
-      let eventResponses = [];
+      // [Rest of your event-adding and socket logic remains unchanged...]
+      const eventResponses = [];
       if (req.user.role === "admin") {
         const students = await User.find({
           role: "student",
@@ -147,6 +150,7 @@ exports.createTimetable = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.toString() });
   }
 };
+
 
 exports.updateTimetable = async (req, res) => {
   try {

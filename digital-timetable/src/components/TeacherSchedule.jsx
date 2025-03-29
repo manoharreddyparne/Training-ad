@@ -1,16 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "./TeacherSchedule.css";
 
 const TeacherSchedule = ({ schedule }) => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="teacher-schedule-container">
       <h2>Your Schedule</h2>
       {schedule.length === 0 ? (
         <p>No schedule available.</p>
       ) : (
-        <table border="1">
+        <table className="teacher-schedule-table">
           <thead>
             <tr>
               <th>Subject</th>
@@ -24,9 +25,12 @@ const TeacherSchedule = ({ schedule }) => {
               <tr key={index}>
                 <td>{classDetails.subject}</td>
                 <td>{classDetails.date}</td>
-                <td>{classDetails.startTime} - {classDetails.endTime}</td>
+                <td>
+                  {classDetails.startTime} - {classDetails.endTime}
+                </td>
                 <td>
                   <button
+                    className="teacher-schedule-button"
                     onClick={() =>
                       navigate("/request-change", { state: { classDetails } })
                     }

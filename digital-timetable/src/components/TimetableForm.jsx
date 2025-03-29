@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import "./TimetableForm.css";
 
 const TimetableForm = () => {
   const [title, setTitle] = useState('');
@@ -22,30 +23,49 @@ const TimetableForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = {
+      title,
+      date,
+      section,
+      timeSlots,
+    };
+    console.log("Submitting payload:", payload);
     try {
-      const payload = {
-        title,
-        date,
-        section,
-        timeSlots,
-      };
       const response = await api.post('/timetable/', payload);
       setMessage("Timetable created/updated successfully!");
-      console.log(response.data);
+      console.log("Response data:", response.data);
     } catch (err) {
       setMessage("Error creating timetable.");
-      console.error(err);
+      console.error("Error details:", err.response ? err.response.data : err.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} required />
-      <input type="datetime-local" placeholder="Date" value={date} onChange={e => setDate(e.target.value)} required />
-      <input type="text" placeholder="Section" value={section} onChange={e => setSection(e.target.value)} required />
+    <form onSubmit={handleSubmit} className="timetable-form">
+      <input
+        type="text"
+        placeholder="Title"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        required
+      />
+      <input 
+        type="date" 
+        placeholder="Date" 
+        value={date} 
+        onChange={e => setDate(e.target.value)} 
+        required 
+      />
+      <input
+        type="text"
+        placeholder="Section"
+        value={section}
+        onChange={e => setSection(e.target.value)}
+        required
+      />
       <h3>Time Slots:</h3>
       {timeSlots.map((slot, index) => (
-        <div key={index}>
+        <div key={index} className="timeslot">
           <input
             type="time"
             placeholder="Start Time"

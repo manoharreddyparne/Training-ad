@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
-
+import './Signup.css';
 const Signup = () => {
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -37,10 +37,10 @@ const Signup = () => {
   };
 
   return (
-    <div>
+    <div className="signup-container">
       <h2>Signup</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {message && <p style={{ color: 'green' }}>{message}</p>}
+      {error && <p className="error-message">{error}</p>}
+      {message && <p className="success-message">{message}</p>}
       <form onSubmit={handleSignup}>
         <input
           type="text"
@@ -67,6 +67,6 @@ const Signup = () => {
       </form>
     </div>
   );
-};
+};  
 
 export default Signup;

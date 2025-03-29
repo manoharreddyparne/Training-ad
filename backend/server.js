@@ -6,13 +6,13 @@ const passport = require("./config/passport");
 const connectDB = require("./config/db");
 const http = require("http");
 const socketIo = require("socket.io");
+const cookieParser = require("cookie-parser"); // Added cookie-parser
 
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
 const requestChangeRoutes = require("./routes/requestChangeRoutes");
-// Socket.IO configuration
 const io = socketIo(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -22,6 +22,7 @@ const io = socketIo(server, {
 });
 
 app.use(express.json());
+app.use(cookieParser()); // Use cookie-parser middleware
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
@@ -37,13 +38,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Attach socket.io instance to the app for global use
 app.set("socketio", io);
 
-// Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/timetable", require("./routes/timetableRoutes"));
 app.use("/api", requestChangeRoutes);
+
 app.get("/dashboard", (req, res) => {
   if (req.isAuthenticated && req.isAuthenticated()) {
     res.send(`

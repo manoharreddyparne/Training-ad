@@ -1,12 +1,11 @@
 import React, { useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import TimetableForm from "./TimetableForm";
 import TimetableList from "./TimetableList";
-import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const { user, loading, logout } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,20 +17,14 @@ const Dashboard = () => {
   if (loading) return <p>Loading...</p>;
   if (!user) return null;
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login", { replace: true });
-  };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h1>Dashboard</h1>
       <p>
         Welcome, <strong>{user.name}</strong> ({user.role})
       </p>
-      <button onClick={handleLogout} style={{ padding: "8px 16px", cursor: "pointer", marginBottom: "10px" }}>
-        Logout
-      </button>
+
       <hr />
 
       {user.role === "student" && (
@@ -44,7 +37,7 @@ const Dashboard = () => {
       {user.role === "teacher" && (
         <>
           <h2>Your Teaching Schedule</h2>
-          <TimetableList /> 
+          <TimetableList />
           <Link to="/request-change">
             <button style={{ padding: "10px", marginTop: "10px", cursor: "pointer" }}>
               Request Schedule Change
@@ -57,6 +50,8 @@ const Dashboard = () => {
         <>
           <h2>Create Timetable</h2>
           <TimetableForm />
+          <h2>Existing Timetables</h2>
+          <TimetableList />
         </>
       )}
     </div>

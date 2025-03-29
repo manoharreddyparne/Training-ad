@@ -48,10 +48,10 @@ const WeeklySchedule = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className="weekly-schedule-container">
       <h2>Weekly Schedule</h2>
       <p>Your Section: {user.section || "Not set"}</p>
-      <table border="1" cellPadding="8" cellSpacing="0">
+      <table className="weekly-schedule-table">
         <thead>
           <tr>
             <th>Day</th>
@@ -65,7 +65,7 @@ const WeeklySchedule = () => {
               <td>
                 {schedule[day]?.length > 0 ? (
                   schedule[day].map(entry => (
-                    <div key={entry._id} style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "5px" }}>
+                    <div key={entry._id} className="schedule-entry">
                       <strong>{entry.title}</strong> <br />
                       {user.role === "student" ? (
                         <>
@@ -96,6 +96,7 @@ const WeeklySchedule = () => {
       </table>
     </div>
   );
+  
 };
 
 export default WeeklySchedule;

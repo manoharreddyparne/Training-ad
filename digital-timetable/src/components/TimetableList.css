@@ -1,0 +1,36 @@
+.timetable-list-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+
+  .timetable-list-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .timetable-entry {
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fafafa;
+  }
+
+  .timetable-entry h3 {
+    margin: 0 0 10px;
+    color: #333;
+  }
+  
+  .timetable-entry p {
+    margin: 5px 0;
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
